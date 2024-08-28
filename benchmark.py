@@ -15,10 +15,30 @@ transform = transforms.Compose([
     transforms.PILToTensor()])
 
 
+def resize_with_smallest_side(image: Image.Image, target_size: int = 256) -> Image.Image:
+    # Get the original size
+    original_width, original_height = image.size
+
+    # Calculate the scaling factor based on the smallest side
+    if original_width < original_height:
+        scale_factor = target_size / original_width
+    else:
+        scale_factor = target_size / original_height
+
+    # Calculate the new size
+    new_width = int(original_width * scale_factor)
+    new_height = int(original_height * scale_factor)
+
+    # Resize the image
+    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+
+    return resized_image
+
+
 def load_image_from_url(url):
     image = Image.open(requests.get(url, stream=True).raw)
     image = image.convert('RGB')
-    image = image.resize((256, 256))
+    image = resize_with_smallest_side(image, 256)
     image = transform(image)
     return image
 
