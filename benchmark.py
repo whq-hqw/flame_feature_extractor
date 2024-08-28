@@ -6,6 +6,7 @@ from PIL import Image
 import requests
 import torchvision.transforms as transforms
 import torch
+from tqdm import tqdm
 
 from flame_feature_extractor.feature_extractor import PreProcessBatchFace, FeatureExtractorFLAME
 from flame_feature_extractor.renderer import FlameRenderer
@@ -22,10 +23,11 @@ def load_image_from_url(url):
     return image
 
 
+print('Loading image...')
 img = load_image_from_url('https://github.com/elliottzheng/batch-face/blob/master/examples/obama.jpg?raw=true')
+imgs = torch.stack([img] * 120)
 
-imgs = torch.stack([img] * 60)
-
+print('Loading models...')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 preprocessor = PreProcessBatchFace()
@@ -39,16 +41,19 @@ renderer = FlameRenderer(
     scale=5.0,
 ).to(device)
 
+print('Benchmarking preprocessing...')
 st = time.time()
-for _ in range(50):
+for _ in tqdm(range(50)):
     preprocessor_output = preprocessor(imgs)
 
 print('Preprocessing time (CPU):', (time.time() - st) / 50)
 
 preprocessor_output = {k: v.to(device) for k, v in preprocessor_output.items()}
+
+print('Benchmarking feature extraction...')
 torch.cuda.synchronize()
 st = time.time()
-for _ in range(50):
+for _ in tqdm(range(50)):
     output = feature_extractor(mica_images=preprocessor_output['mica_images'],
                                emoca_images=preprocessor_output['emoca_images'])
 torch.cuda.synchronize()
