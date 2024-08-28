@@ -1,4 +1,7 @@
 # flame_feature_extractor
+A simple library based on [lightning_track](https://github.com/xg-chu/lightning_track). 
+
+Most of the code is taken from the original library and modified to suit my needs.
 
 ## Installation
 
@@ -45,4 +48,16 @@ out_ims, _ = renderer.render_batch(**output)
 
 # Save the first rendered image as an example, rendering is done in batch
 cv2.imwrite('rendered.png', out_ims.permute(0, 2, 3, 1).cpu().numpy().astype(np.uint8)[0])
+```
+
+## Reference
+```bibtex
+@inproceedings{
+    chu2024gpavatar,
+    title={{GPA}vatar: Generalizable and Precise Head Avatar from Image(s)},
+    author={Xuangeng Chu and Yu Li and Ailing Zeng and Tianyu Yang and Lijian Lin and Yunfei Liu and Tatsuya Harada},
+    booktitle={The Twelfth International Conference on Learning Representations},
+    year={2024},
+    url={https://openreview.net/forum?id=hgehGq2bDv}
+}
 ```
