@@ -39,7 +39,8 @@ renderer = FlameRenderer(
     n_shape=100,
     n_exp=50,
     scale=5.0,
-).to(device)
+    device=device.type
+)
 
 iters = 5
 print('Benchmarking preprocessing...')
