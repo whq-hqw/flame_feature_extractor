@@ -30,7 +30,7 @@ def resize_with_smallest_side(image: Image.Image, target_size: int = 256) -> Ima
     new_height = int(original_height * scale_factor)
 
     # Resize the image
-    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
     return resized_image
 
