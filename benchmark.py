@@ -63,4 +63,5 @@ torch.cuda.synchronize()
 print(f'Rendering time ({device}):', time.time() - st)
 
 # Save the first rendered image as an example, rendering is done in batch
+cv2.imwrite('original.png', img.permute(1, 2, 0).cpu().numpy().astype(np.uint8))
 cv2.imwrite('rendered.png', out_ims.permute(0, 2, 3, 1).cpu().numpy().astype(np.uint8)[0])
