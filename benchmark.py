@@ -62,7 +62,7 @@ renderer = FlameRenderer(
     device=device.type
 )
 
-iters = 5
+iters = 50
 print('Benchmarking preprocessing...')
 st = time.time()
 for _ in tqdm(range(iters)):
