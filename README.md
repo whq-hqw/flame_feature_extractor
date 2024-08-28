@@ -10,7 +10,6 @@ pip install -r requirements_post.txt
 ## Usage
 
 ```python
-import time
 import cv2
 import numpy as np
 from flame_feature_extractor.feature_extractor import PreProcessBatchFace, FeatureExtractorFLAME
@@ -28,14 +27,9 @@ renderer = FlameRenderer(
     n_exp=50,
     scale=5.0,
 )
-st = time.time()
 preprocessor_output = preprocessor(imgs)
-print('Preprocessing time (CPU):', time.time() - st)
-
-st = time.time()
 output = feature_extractor(mica_images=preprocessor_output['mica_images'], 
                            emoca_images=preprocessor_output['emoca_images'])
-print('Feature extraction time (CPU):', time.time() - st)
 
 print(output['shape'].shape, output['expression'].shape, output['pose'].shape)
 
