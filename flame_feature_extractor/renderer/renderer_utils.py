@@ -70,7 +70,7 @@ class RenderMesh(nn.Module, ModuleUtilsMixin):
         renderer = MeshRenderer(
             rasterizer=MeshRasterizer(cameras=cameras, raster_settings=self.raster_settings),
             shader=SoftPhongShader(cameras=cameras, lights=self.lights, device=self.device),
-        )
+        ).to(self.device)
         render_results = renderer(mesh).permute(0, 3, 1, 2)
         images = render_results[:, :3]
         alpha_images = render_results[:, 3:]

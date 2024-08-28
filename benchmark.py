@@ -46,7 +46,9 @@ st = time.time()
 for _ in tqdm(range(50)):
     preprocessor_output = preprocessor(imgs)
 
-print('Preprocessing time (CPU):', (time.time() - st) / 50)
+fps = 120 * 50 / (time.time() - st)
+print('Preprocessing time (CPU) (120 frames):', (time.time() - st) / 50)
+print(f"FPS: {fps}")
 
 preprocessor_output = {k: v.to(device) for k, v in preprocessor_output.items()}
 
@@ -57,9 +59,9 @@ for _ in tqdm(range(50)):
     output = feature_extractor(mica_images=preprocessor_output['mica_images'],
                                emoca_images=preprocessor_output['emoca_images'])
 torch.cuda.synchronize()
-print(f'Feature extraction time ({device}):', (time.time() - st) / 50)
-
-# print(output['shape'].shape, output['expression'].shape, output['pose'].shape)
+fps = 120 * 50 / (time.time() - st)
+print(f'Feature extraction time ({device}) (120 frames):', (time.time() - st) / 50)
+print(f"FPS: {fps}")
 
 torch.cuda.synchronize()
 st = time.time()
