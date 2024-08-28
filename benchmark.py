@@ -24,7 +24,7 @@ def load_image_from_url(url):
 
 
 print('Loading image...')
-img = load_image_from_url('https://github.com/elliottzheng/batch-face/blob/master/examples/obama.jpg?raw=true')
+img = load_image_from_url('https://images.pexels.com/photos/1102341/pexels-photo-1102341.jpeg')
 imgs = torch.stack([img] * 120)
 
 print('Loading models...')
