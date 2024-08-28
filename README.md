@@ -1,5 +1,11 @@
 # flame_feature_extractor
 
+## Installation
+
+```bash
+pip install -r requirements_pre.txt
+pip install -r requirements_post.txt
+
 ## Usage
 
 ```python
