@@ -34,11 +34,12 @@ class RenderMesh(nn.Module, ModuleUtilsMixin):
         self.image_size = image_size
         if obj_filename is not None:
             verts, faces, aux = load_obj(obj_filename, load_textures=False)
-            self.faces = faces.verts_idx
+            self.register_buffer("faces", faces.verts_idx)
+            # self.faces = faces.verts_idx
         elif faces is not None:
             import numpy as np
-
-            self.faces = torch.tensor(faces.astype(np.int32))
+            self.register_buffer("faces", torch.tensor(faces.astype(np.int32)))
+            # self.faces = torch.tensor(faces.astype(np.int32))
         else:
             raise NotImplementedError("Must have faces.")
         self.raster_settings = RasterizationSettings(image_size=image_size, blur_radius=0.0, faces_per_pixel=1)
