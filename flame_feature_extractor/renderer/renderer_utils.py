@@ -68,7 +68,7 @@ class RenderMesh(nn.Module, ModuleUtilsMixin):
         textures = TexturesVertex(verts_features=verts_rgb)
         mesh = Meshes(verts=vertices, faces=faces, textures=textures)
         renderer = MeshRenderer(
-            rasterizer=MeshRasterizer(cameras=cameras, raster_settings=self.raster_settings),
+            rasterizer=MeshRasterizer(cameras=cameras, raster_settings=self.raster_settings).to(self.device),
             shader=SoftPhongShader(cameras=cameras, lights=self.lights, device=self.device),
         ).to(self.device)
         render_results = renderer(mesh).permute(0, 3, 1, 2)
