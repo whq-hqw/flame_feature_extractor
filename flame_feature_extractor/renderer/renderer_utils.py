@@ -25,25 +25,24 @@ from pytorch3d.renderer import (
     MeshRenderer,
     SoftSilhouetteShader,
 )
-from transformers.modeling_utils import ModuleUtilsMixin
 
 
-class RenderMesh(nn.Module, ModuleUtilsMixin):
-    def __init__(self, image_size, obj_filename=None, faces=None):
+class RenderMesh(nn.Module):
+    def __init__(self, image_size, obj_filename=None, faces=None, device="cpu"):
         super(RenderMesh, self).__init__()
+        self.device = device
         self.image_size = image_size
         if obj_filename is not None:
             verts, faces, aux = load_obj(obj_filename, load_textures=False)
-            self.register_buffer("faces", faces.verts_idx)
-            # self.faces = faces.verts_idx
+            self.faces = faces.verts_idx
         elif faces is not None:
             import numpy as np
-            self.register_buffer("faces", torch.tensor(faces.astype(np.int32)))
-            # self.faces = torch.tensor(faces.astype(np.int32))
+
+            self.faces = torch.tensor(faces.astype(np.int32))
         else:
             raise NotImplementedError("Must have faces.")
         self.raster_settings = RasterizationSettings(image_size=image_size, blur_radius=0.0, faces_per_pixel=1)
-        self.lights = PointLights(location=[[0.0, 0.0, 3.0]])
+        self.lights = PointLights(device=device, location=[[0.0, 0.0, 3.0]])
 
     def _build_cameras(self, transform_matrix, focal_length):
         batch_size = transform_matrix.shape[0]
@@ -65,12 +64,12 @@ class RenderMesh(nn.Module, ModuleUtilsMixin):
         faces = self.faces[None].repeat(vertices.shape[0], 1, 1)
         # Initialize each vertex to be white in color.
         verts_rgb = torch.ones_like(vertices)  # (1, V, 3)
-        textures = TexturesVertex(verts_features=verts_rgb)
-        mesh = Meshes(verts=vertices, faces=faces, textures=textures)
+        textures = TexturesVertex(verts_features=verts_rgb.to(self.device))
+        mesh = Meshes(verts=vertices.to(self.device), faces=faces.to(self.device), textures=textures)
         renderer = MeshRenderer(
-            rasterizer=MeshRasterizer(cameras=cameras, raster_settings=self.raster_settings).to(self.device),
+            rasterizer=MeshRasterizer(cameras=cameras, raster_settings=self.raster_settings),
             shader=SoftPhongShader(cameras=cameras, lights=self.lights, device=self.device),
-        ).to(self.device)
+        )
         render_results = renderer(mesh).permute(0, 3, 1, 2)
         images = render_results[:, :3]
         alpha_images = render_results[:, 3:]

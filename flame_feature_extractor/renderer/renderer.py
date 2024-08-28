@@ -1,29 +1,28 @@
 import torch
-import torch.nn as nn
-from transformers.modeling_utils import ModuleUtilsMixin
 
 from .flame import FLAME
 from .renderer_utils import RenderMesh
 
 
-class FlameRenderer(nn.Module, ModuleUtilsMixin):
+class FlameRenderer:
     def __init__(
         self,
-        max_batch_size: int = 128,
         fixed_transform=False,
+        device="cuda",
+        max_batch_size: int = 128,
         n_shape: int = 100,
         n_exp: int = 50,
         scale: float = 5.0,
     ):
-        super().__init__()
+
+        self.device = device
         self.max_batch_size = max_batch_size
         self.fixed_transform = fixed_transform
-        self.flame_model = FLAME(n_shape=n_shape, n_exp=n_exp, scale=scale)
-        self.mesh_render = RenderMesh(512, faces=self.flame_model.get_faces().cpu().numpy())
-        transform_matrix = torch.tensor(
-            [[[-1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, -1.0, 12.0]]], dtype=torch.float32
+        self.flame_model = FLAME(n_shape=n_shape, n_exp=n_exp, scale=scale).to(device)
+        self.mesh_render = RenderMesh(512, faces=self.flame_model.get_faces().cpu().numpy(), device=device)
+        self.transform_matrix = torch.tensor(
+            [[[-1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, -1.0, 12.0]]], dtype=torch.float32, device=device
         )
-        self.register_buffer("transform_matrix", transform_matrix)
 
     def render(self, shape, expression, pose, eye=None, transform_matrix=None, **kwargs):
         if type(shape) != torch.Tensor:
@@ -67,7 +66,7 @@ class FlameRenderer(nn.Module, ModuleUtilsMixin):
         )
         if transform_matrix is None or self.fixed_transform:
             transform_matrix = self.transform_matrix
-        elif not isinstance(transform_matrix, torch.Tensor):
+        elif type(transform_matrix) != torch.Tensor:
             transform_matrix = torch.tensor(transform_matrix, dtype=torch.float32, device=self.device)[None]
         else:
             transform_matrix = transform_matrix.to(self.device)[None]
