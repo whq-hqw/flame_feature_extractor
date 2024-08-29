@@ -17,17 +17,19 @@ class CustomInstallCommand(install):
         package_path = os.path.join(site_packages_path, 'flame_feature_extractor')
 
         # Define the shell commands with the correct paths
-        script = f"""
-        wget https://github.com/xg-chu/lightning_track/releases/download/resources/resources.tar -O ./resources.tar
-        tar -xvf resources.tar
-        mv resources/emoca/* {package_path}/feature_extractor/emoca/assets/
-        mv resources/FLAME/* {package_path}/renderer/assets/
-        mv resources/mica/* {package_path}/feature_extractor/mica/assets/
-        rm -r resources/
-        """
+        commands = [
+            "wget https://github.com/xg-chu/lightning_track/releases/download/resources/resources.tar -O ./resources.tar",
+            "tar -xvf resources.tar",
+            f"mv resources/emoca/* {package_path}/feature_extractor/emoca/assets/",
+            f"mv resources/FLAME/* {package_path}/renderer/assets/",
+            f"mv resources/mica/* {package_path}/feature_extractor/mica/assets/",
+            "rm -r resources/"
+        ]
 
-        # Execute the script
-        subprocess.check_call(script, shell=True)
+        # Execute each command and print output
+        for command in commands:
+            print(f"Executing: {command}")
+            subprocess.call(command, shell=True)
 
 setup(
     name="flame_feature_extractor",
