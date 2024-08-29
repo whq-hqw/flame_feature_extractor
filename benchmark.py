@@ -64,7 +64,7 @@ renderer = FlameRenderer(
     device=device.type
 )
 
-iters = 50
+iters = 10
 print('Benchmarking preprocessing...')
 st = time.time()
 for _ in tqdm(range(iters)):
@@ -80,8 +80,7 @@ print('Benchmarking feature extraction...')
 torch.cuda.synchronize()
 st = time.time()
 for _ in tqdm(range(iters)):
-    output = feature_extractor(mica_images=preprocessor_output['mica_images'],
-                               emoca_images=preprocessor_output['emoca_images'])
+    output = feature_extractor(**preprocessor_output)
 torch.cuda.synchronize()
 fps = 120 * iters / (time.time() - st)
 print(f'Feature extraction time ({device}) (120 frames):', (time.time() - st) / 50)
