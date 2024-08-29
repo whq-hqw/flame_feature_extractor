@@ -25,7 +25,7 @@ class CustomInstallCommand(install):
             f"mv {site_packages_path}/resources/emoca/* {package_path}/feature_extractor/emoca/assets/",
             f"mv {site_packages_path}/resources/FLAME/* {package_path}/renderer/assets/",
             f"mv {site_packages_path}/resources/mica/* {package_path}/feature_extractor/mica/assets/",
-            f"rm -r {site_packages_path}/resources/"
+            # f"rm -r {site_packages_path}/resources/"
         ]
 
         # Execute each command and print output
