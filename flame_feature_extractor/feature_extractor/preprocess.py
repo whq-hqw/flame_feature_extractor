@@ -92,9 +92,9 @@ class PreProcessMediaPipe:
                 top=int(center[1] - size / 2), left=int(center[0] - size / 2),
                 height=size, width=size,
             )
+            emoca_images = torchvision.transforms.functional.resize(emoca_image, size=224, antialias=True) / 255.0
             emoca_images.append(emoca_image)
 
         emoca_images = torch.stack(emoca_images)
-        emoca_images = torchvision.transforms.functional.resize(emoca_images, size=224, antialias=True) / 255.0
 
         return {'emoca_images': emoca_images}
