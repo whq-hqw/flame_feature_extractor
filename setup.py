@@ -14,16 +14,18 @@ class CustomInstallCommand(install):
     def execute_post_install_script(self):
         # Get the site-packages path
         site_packages_path = next(p for p in sys.path if 'site-packages' in p)
+        print(site_packages_path)
         package_path = os.path.join(site_packages_path, 'flame_feature_extractor')
+        print(package_path)
 
         # Define the shell commands with the correct paths
         commands = [
-            "wget https://github.com/xg-chu/lightning_track/releases/download/resources/resources.tar -O ./resources.tar",
-            "tar -xvf resources.tar",
+            f"wget https://github.com/xg-chu/lightning_track/releases/download/resources/resources.tar -O {package_path}/resources.tar",
+            f"tar -xvf {package_path}/resources.tar",
             f"mv resources/emoca/* {package_path}/feature_extractor/emoca/assets/",
             f"mv resources/FLAME/* {package_path}/renderer/assets/",
             f"mv resources/mica/* {package_path}/feature_extractor/mica/assets/",
-            "rm -r resources/"
+            f"rm -r {package_path}/resources/"
         ]
 
         # Execute each command and print output
