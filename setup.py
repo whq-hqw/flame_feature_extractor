@@ -43,7 +43,7 @@ setup(
         "mediapipe",
         "scikit-image",
         "onnx",
-        "onnxtuntime",
+        "onnxruntime",
     ],
     cmdclass={
         'install': CustomInstallCommand,
