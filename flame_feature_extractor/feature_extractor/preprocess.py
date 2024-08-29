@@ -75,16 +75,17 @@ class PreProcessMediaPipe:
                 return None
             else:
                 lmks_dense = lmks_dense.multi_face_landmarks[0].landmark
-                lmks_dense = np.array(list(map(lambda l: np.array([l.x, l.y]), lmks_dense)))
+                # lmks_dense = np.array(list(map(lambda l: np.array([l.x, l.y]), lmks_dense)))
+                lmks_dense = np.array([[l.x, l.y] for l in lmks_dense])
                 lmks_dense[:, 0] = lmks_dense[:, 0] * lmk_image.shape[1]
                 lmks_dense[:, 1] = lmks_dense[:, 1] * lmk_image.shape[0]
                 # lmks_dense = torch.tensor(lmks_dense)
 
-            min_xy = lmks_dense.min(dim=0)[0]
-            max_xy = lmks_dense.max(dim=0)[0]
-            box = torch.tensor([min_xy[0], min_xy[1], max_xy[0], max_xy[1]])
+            min_xy = lmks_dense.min(axis=0)[0]
+            max_xy = lmks_dense.max(axis=0)[0]
+            box = [min_xy[0], min_xy[1], max_xy[0], max_xy[1]]
             size = int((box[2] + box[3] - box[0] - box[1]) / 2 * 1.25)
-            center = torch.tensor([(box[0] + box[2]) / 2.0, (box[1] + box[3]) / 2.0])
+            center = [(box[0] + box[2]) / 2.0, (box[1] + box[3]) / 2.0]
 
             emoca_image = torchvision.transforms.functional.crop(
                 frame.float(),
