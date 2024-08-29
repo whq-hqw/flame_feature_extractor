@@ -8,10 +8,4 @@ setup(
     author_email="nabarungoswami@mi.t.u-tokyo.ac.jp",
     packages=find_packages(),
     package_dir={"": "."},
-    install_requires=[
-        "mediapipe",
-        "scikit-image",
-        "onnx",
-        "onnxtuntime",
-    ],
 )
