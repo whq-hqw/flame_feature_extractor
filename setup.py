@@ -27,6 +27,9 @@ class CustomInstallCommand(install):
             f"mv {site_packages_path}/resources/mica/* {package_path}/feature_extractor/mica/assets/",
             # f"rm -r {site_packages_path}/resources/"
         ]
+        os.makedirs(f"{package_path}/feature_extractor/emoca/assets")
+        os.makedirs(f"{package_path}/renderer/assets")
+        os.makedirs(f"{package_path}/feature_extractor/mica/assets")
 
         # Execute each command and print output
         for i, command in enumerate(commands):
