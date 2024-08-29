@@ -33,12 +33,6 @@ class CustomInstallCommand(install):
 
         # Execute each command and print output
         for i, command in enumerate(commands):
-            print(f"Executing: {command}")
-            if i > 1:
-                if os.path.exists(f"{site_packages_path}/resources"):
-                    print("resources exists")
-                if os.path.exists(f"{package_path}/feature_extractor"):
-                    print("code exists")
             subprocess.call(command, shell=True)
 
 setup(
