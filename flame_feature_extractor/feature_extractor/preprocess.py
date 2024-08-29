@@ -51,12 +51,12 @@ class PreProcessBatchFace:
 
 class PreProcessMediaPipe:
     def __init__(self, gpu_id=-1):
-        self.detector = RetinaFace(fp16=False, gpu_id=gpu_id)
-        self.threshold = 0.95
+        # self.detector = RetinaFace(fp16=False, gpu_id=gpu_id)
+        # self.threshold = 0.95
 
         self.dense_lmks_model = mediapipe.solutions.face_mesh.FaceMesh(
-            static_image_mode=True,
-            max_num_faces=1, refine_landmarks=True,
+            static_image_mode=False,
+            max_num_faces=1, refine_landmarks=False,
             min_detection_confidence=0.5, min_tracking_confidence=0.5
         )
 
