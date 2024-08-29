@@ -6,7 +6,7 @@ from .models.DecaEncoder import ResnetEncoder
 class EMOCAV2(torch.nn.Module):
     def __init__(self, ):
         super().__init__()
-        self.params_list = [100, 50, 50, 6, 3, 27] # n_shape, n_tex, n_exp, n_pose, n_cam, n_light
+        self.params_list = [100, 50, 50, 6, 3, 27]  # n_shape, n_tex, n_exp, n_pose, n_cam, n_light
         self.params_keys = ['shape', 'tex', 'exp', 'pose', 'cam', 'light']
         # 1) build coarse encoder
         self.E_flame = ResnetEncoder(outsize=sum(self.params_list))

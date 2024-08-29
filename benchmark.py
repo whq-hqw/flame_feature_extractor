@@ -9,6 +9,7 @@ import torch
 from tqdm import tqdm
 
 from flame_feature_extractor.feature_extractor import PreProcessBatchFace, FeatureExtractorFLAME
+from flame_feature_extractor.feature_extractor.preprocess import PreProcessMediaPipe
 from flame_feature_extractor.renderer import FlameRenderer
 
 transform = transforms.Compose([
@@ -50,7 +51,8 @@ imgs = torch.stack([img] * 120)
 print('Loading models...')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-preprocessor = PreProcessBatchFace()
+# preprocessor = PreProcessBatchFace()
+preprocessor = PreProcessMediaPipe()
 feature_extractor = FeatureExtractorFLAME().to(device).eval()
 
 renderer = FlameRenderer(

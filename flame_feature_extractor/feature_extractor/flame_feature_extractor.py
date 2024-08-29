@@ -17,13 +17,15 @@ class FeatureExtractorFLAME(nn.Module):
         self.mica_model = MICA().eval()
 
     @torch.no_grad()
-    def forward(self, mica_images, emoca_images):
-        mica_shape = self.mica_model(mica_images)[:, :100]
+    def forward(self, emoca_images, mica_images=None):
+        shape = None
+        if mica_images is not None:
+            shape = self.mica_model(mica_images)[:, :100]
 
         emoca_result = self.emoca_model.encode(emoca_images)
 
         results = {
-            'shape': mica_shape,
+            'shape': emoca_result['shape'] if shape is None else shape,
             'expression': emoca_result['exp'],
             'pose': emoca_result['pose'],
         }

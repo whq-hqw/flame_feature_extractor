@@ -1,7 +1,9 @@
 import cv2
+import numpy as np
 import torch
 import torchvision
 from batch_face import RetinaFace
+import mediapipe
 
 from .mica.insightface import face_align
 
@@ -45,3 +47,53 @@ class PreProcessBatchFace:
         emoca_images = torchvision.transforms.functional.resize(emoca_images, size=224, antialias=True) / 255.0
 
         return {'mica_images': mica_images, 'emoca_images': emoca_images}
+
+
+class PreProcessMediaPipe:
+    def __init__(self, gpu_id=-1):
+        self.detector = RetinaFace(fp16=False, gpu_id=gpu_id)
+        self.threshold = 0.95
+
+        self.dense_lmks_model = mediapipe.solutions.face_mesh.FaceMesh(
+            static_image_mode=True,
+            max_num_faces=1, refine_landmarks=True,
+            min_detection_confidence=0.5, min_tracking_confidence=0.5
+        )
+
+    def __call__(self, frames):
+        """
+
+        :param frames: RGB images of shape (B, 3, H, W), torch tensor
+        :return:
+        """
+        # frames = frames.permute(0, 2, 3, 1)  # (B, H, W, 3)
+        emoca_images = []
+        for frame in frames:
+            lmk_image = np.transpose(frame.cpu().numpy(), (1, 2, 0))
+            lmks_dense = self.dense_lmks_model.process(lmk_image)
+            if lmks_dense.multi_face_landmarks is None:
+                return None
+            else:
+                lmks_dense = lmks_dense.multi_face_landmarks[0].landmark
+                lmks_dense = np.array(list(map(lambda l: np.array([l.x, l.y]), lmks_dense)))
+                lmks_dense[:, 0] = lmks_dense[:, 0] * lmk_image.shape[1]
+                lmks_dense[:, 1] = lmks_dense[:, 1] * lmk_image.shape[0]
+                # lmks_dense = torch.tensor(lmks_dense)
+
+            min_xy = lmks_dense.min(dim=0)[0]
+            max_xy = lmks_dense.max(dim=0)[0]
+            box = torch.tensor([min_xy[0], min_xy[1], max_xy[0], max_xy[1]])
+            size = int((box[2] + box[3] - box[0] - box[1]) / 2 * 1.25)
+            center = torch.tensor([(box[0] + box[2]) / 2.0, (box[1] + box[3]) / 2.0])
+
+            emoca_image = torchvision.transforms.functional.crop(
+                frame.float(),
+                top=int(center[1] - size / 2), left=int(center[0] - size / 2),
+                height=size, width=size,
+            )
+            emoca_images.append(emoca_image)
+
+        emoca_images = torch.stack(emoca_images)
+        emoca_images = torchvision.transforms.functional.resize(emoca_images, size=224, antialias=True) / 255.0
+
+        return {'emoca_images': emoca_images}
