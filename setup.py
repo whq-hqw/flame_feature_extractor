@@ -20,12 +20,12 @@ class CustomInstallCommand(install):
 
         # Define the shell commands with the correct paths
         commands = [
-            f"wget https://github.com/xg-chu/lightning_track/releases/download/resources/resources.tar -O {package_path}/resources.tar",
-            f"tar -xvf {package_path}/resources.tar",
-            f"mv resources/emoca/* {package_path}/feature_extractor/emoca/assets/",
-            f"mv resources/FLAME/* {package_path}/renderer/assets/",
-            f"mv resources/mica/* {package_path}/feature_extractor/mica/assets/",
-            f"rm -r {package_path}/resources/"
+            f"wget https://github.com/xg-chu/lightning_track/releases/download/resources/resources.tar -O {site_packages_path}/resources.tar",
+            f"tar -xvf {site_packages_path}/resources.tar",
+            f"mv {site_packages_path}/resources/emoca/* {package_path}/feature_extractor/emoca/assets/",
+            f"mv {site_packages_path}/resources/FLAME/* {package_path}/renderer/assets/",
+            f"mv {site_packages_path}/resources/mica/* {package_path}/feature_extractor/mica/assets/",
+            f"rm -r {site_packages_path}/resources/"
         ]
 
         # Execute each command and print output
