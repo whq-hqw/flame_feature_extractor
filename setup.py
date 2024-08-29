@@ -36,7 +36,6 @@ class CustomInstallCommand(install):
                     print("resources exists")
                 if os.path.exists(f"{package_path}/feature_extractor"):
                     print("code exists")
-                input_str = input("continue")
             subprocess.call(command, shell=True)
 
 setup(
